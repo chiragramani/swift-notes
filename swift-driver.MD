@@ -118,6 +118,6 @@ To mention a few:
 1. Cross-Module Incremental Build Improvements:
     1. [Antisymmetry](https://github.com/apple/swift-driver/blob/bad19ac928dab85695461540d3174da2ff8cd1f2/Tests/IncrementalImportTests/Antisymmetry.swift)
     2. [Transitivity](https://github.com/apple/swift-driver/blob/bad19ac928dab85695461540d3174da2ff8cd1f2/Tests/IncrementalImportTests/Transitivity.swift)
-    3. "[Explicit Module Builds](https://forums.swift.org/t/explicit-module-builds-the-new-swift-driver-and-swiftpm/36990) are allowing us to diagnose a class of problems at build plan time that would otherwise be caught much later in the compilation process or even cause compiler hangs and crashes."
+2. "[Explicit Module Builds](https://forums.swift.org/t/explicit-module-builds-the-new-swift-driver-and-swiftpm/36990) are allowing us to diagnose a class of problems at build plan time that would otherwise be caught much later in the compilation process or even cause compiler hangs and crashes."
 
 
