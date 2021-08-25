@@ -77,3 +77,39 @@ As we execute the above command, the driver is invoked.
 4. For example, if we pass a WMO mode compilation: “-whole-module-optimization”, then 2 jobs would be constructed. The first job would be to compile all the files “a.swift”, “b.swift”, “c.swift” and the last would be to link all of them.
 5. Note: we can also pass “-emit-module” if we would like the Driver to generate the “.swiftmodule” file.
 
+
+## Let’s take a different but a simple example that involves incremental builds
+“swiftc -module-name MyModule -output-file-map <OFM> -driver-show-incremental -driver-show-job-lifecycle
+-enable-batch-mode
+-save-temps
+-incremental
+a.swift b.swift
+”
+Let’s assume that it's a clean build and there is no derived data present. Let’s also assume that the a.swift and b.swift don’t depend on each other.
+
+1. When the Driver is involved for the first time, clearly there is no derived date, no Build Record present so the Driver doesn’t have an option to skip a compile level job. It generates a new Build Record as well as the dependency graph. 
+2. It then produces 2 jobs. The first one is about  compiling the swift files - “a.swift”, “b.swift” that outputs “a.o”, “b.o”, “a.swiftdeps”, “b.swiftdeps” and the last one is about linking the generated object files to output MyModule.o
+3. Now if you see your derived data folder, you will see the following files generated:
+    1. a.o
+    2. a.swiftdeps
+    3. b.o
+    4. b.swiftdeps
+    5. MyModule-master.priors
+    6. MyModule-master.swiftdeps
+    7. MyModule.o
+4. Now, if you don’t change any file contents and invoke the Driver or use the above swiftc command, the compilation sequence steps for “a.swift”, “b.swift” will be skipped. The Driver has reference to the old BuildRecord and the BuildRecord has the last modified time. Since the files haven’t been modified, the existing generated results are used - which is great because all those heavy steps are saved. You will see the following log statements that say the same:
+
+```
+Incremental compilation: Enabling incremental cross-module building
+Incremental compilation: May skip current input:  {compile: a.o <= a.swift}
+Incremental compilation: May skip current input:  {compile: b.o <= b.swift}
+Incremental compilation: Skipping input:  {compile: a.o <= a.swift}
+Incremental compilation: Skipping input:  {compile: b.o <= b.swift}
+Incremental compilation: Skipping job: Linking MyModule; oldest output is current /var/../TemporaryDirectory.../derivedData/.../MyModule.o
+``` 
+5. Now, lets make some changes to “a.swift”. Clearly the file is modified. When we invoke Driver next, it has access to the BuildRecord, the dependency graph as well. It understands that because of changes in “a.swift”, “a.swift” definitely needs to be re-compiled. But since “b.swift” swiftdeps is not dependent on “a.swift” which the compiler extracts from the respective .swiftdeps files, also given the other deps criteria, it skips compiling “b.swift” and only recompiles “a.swift”.
+6. Following would be good references to understand the other steps involved:
+    1. [MultiJobExecutor.swift](https://github.com/apple/swift-driver/blob/main/Sources/SwiftDriverExecution/MultiJobExecutor.swift)
+    2. [IncrementalCompilationState.swift](https://github.com/apple/swift-driver/blob/main/Sources/SwiftDriver/IncrementalCompilation/IncrementalCompilationState.swift)
+    
+
