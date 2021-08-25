@@ -121,3 +121,7 @@ To mention a few:
 2. "[Explicit Module Builds](https://forums.swift.org/t/explicit-module-builds-the-new-swift-driver-and-swiftpm/36990) are allowing us to diagnose a class of problems at build plan time that would otherwise be caught much later in the compilation process or even cause compiler hangs and crashes."
 
 
+## Misc
+If you are interested in knowing why specific source files were compiled in the incremental build phase or why your incremental builds seem to be slow, this [post](https://forums.swift.org/t/optimizing-and-debugging-incremental-build-time-in-swift-5-5/49379) has you covered - the compiler emits “remarks” explaining why it decided to compile specific files.
+
+In "Other Swift Flags", add -driver-show-incremental and -driver-show-job-lifecycle. 
