@@ -68,6 +68,7 @@ As we execute the above command, the driver is invoked.
         2. Job 2 - “Compile b.swift” -> b-2.o
         3. Job 3 - “Compile c.swift” -> c3.o
         4. Job 4 - “Linking” -> libMyModule.dylib
+3. Once you have the jobs, you can ask [SwiftDriverExecutor](https://github.com/apple/swift-driver/blob/bad19ac928dab85695461540d3174da2ff8cd1f2/Sources/SwiftDriverExecution/SwiftDriverExecutor.swift) or your external build system to execute the same.  [SwiftDriverExecutor](https://github.com/apple/swift-driver/blob/bad19ac928dab85695461540d3174da2ff8cd1f2/Sources/SwiftDriverExecution/SwiftDriverExecutor.swift) actually makes use of [llbuild](https://github.com/apple/swift-llbuild) to execute the jobs.
 
 ### Note:
 1. We can also pass WMO { single or multi threaded} or even batch mode if that's what the configuration we would want to explore.
